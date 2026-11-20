@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leonida Ledger — GTA VI Trophy Guide &amp; Tracker</title>
+<meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: checklist, roadmap to the platinum, missables, and a cited guide for every trophy.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="brand">
+      <p class="kicker">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
+      <h1>Leonida Ledger</h1>
+      <p class="tagline">The offline guide &amp; tracker for every GTA VI trophy — checklist, roadmap, missables, and a cited guide for each one.</p>
+    </div>
+    <section class="progress-card" aria-label="Platinum progress">
+      <p class="progress-big"><span id="earned-count">0</span><span class="progress-of"> / 55 earned</span></p>
+      <div class="progress-bar" role="progressbar" aria-label="Trophies earned" aria-valuemin="0" aria-valuemax="55" aria-valuenow="0" id="progress-bar"><span id="progress-fill"></span></div>
+      <p class="progress-note" id="progress-note">Platinum: Vice Got a Price! — earn the other 54.</p>
+      <ul class="grade-counts" id="grade-counts"></ul>
+    </section>
+  </div>
+  <nav class="tabs" aria-label="Sections">
+    <button type="button" class="tab active" data-view="tracker" id="tab-tracker">Tracker</button>
+    <button type="button" class="tab" data-view="roadmap" id="tab-roadmap">Roadmap to Platinum</button>
+    <button type="button" class="tab" data-view="missables" id="tab-missables">Missables <span class="tab-badge" id="missable-count">1</span></button>
+  </nav>
+</header>
+
+<main>
+  <section id="view-tracker" class="view active" aria-label="Trophy tracker">
+    <div class="toolbar" role="search">
+      <label class="search-box">Search <input id="search" type="search" placeholder="Trophy, mission or keyword…" autocomplete="off"></label>
+      <label class="select-box">Grade
+        <select id="grade-filter">
+          <option value="all">All grades</option>
+          <option value="platinum">Platinum</option>
+          <option value="gold">Gold</option>
+          <option value="silver">Silver</option>
+          <option value="bronze">Bronze</option>
+        </select>
+      </label>
+      <label class="select-box">Kind
+        <select id="kind-filter">
+          <option value="all">All kinds</option>
+          <option value="story">Story</option>
+          <option value="missable">Missable</option>
+          <option value="collectible">Collectibles</option>
+          <option value="activity">Activities</option>
+          <option value="robbery">Robbery</option>
+          <option value="side">Side quests</option>
+          <option value="exploration">Exploration</option>
+          <option value="completion">Completion</option>
+        </select>
+      </label>
+      <label class="check"><input id="hide-earned" type="checkbox"> Hide earned</label>
+      <label class="check spoiler-check"><input id="spoiler-toggle" type="checkbox"> Hide story spoilers</label>
+      <span class="toolbar-spacer"></span>
+      <button id="export-btn" type="button">Export progress</button>
+      <label class="import-btn">Import progress <input id="import-file" type="file" accept="application/json,.json"></label>
+      <button id="reset-btn" type="button" class="quiet">Reset</button>
+    </div>
+    <p class="list-meta"><span id="shown-count"></span> <span id="filter-note"></span></p>
+    <div class="tracker-grid">
+      <ol class="trophy-list" id="trophy-list"></ol>
+      <aside class="detail" id="detail-pane" aria-live="polite"></aside>
+    </div>
+  </section>
+
+  <section id="view-roadmap" class="view" aria-label="Roadmap to the platinum">
+    <p class="section-intro">Built from the official descriptions: the story first, then the 100% checklist, then the cleanup. About 200 hours in all, one playthrough, no online trophies, no difficulty setting — PowerPyx rates the set 4 out of 10.</p>
+    <div id="roadmap-stages"></div>
+    <section class="roadmap-note">
+      <h2>Rules of the road</h2>
+      <ul>
+        <li><strong>No mission replay, no New Game+.</strong> Keep a manual save at the start and end of every chapter — the game has 15 manual save slots.</li>
+        <li><strong>Cheats switch trophies off.</strong> PowerPyx and GTABase both report that cheats disable trophies and saving, so keep them off the whole run.</li>
+        <li><strong>Nothing on the 100% checklist is missable.</strong> Everything for A Long Road can be done in free-roam after the story.</li>
+        <li><strong>Do the Chapter 1 meditation.</strong> The only trophy that may be missable is Positive Mental Attitude — see the Missables tab.</li>
+      </ul>
+    </section>
+  </section>
+
+  <section id="view-missables" class="view" aria-label="Missable trophies">
+    <p class="section-intro">Only one trophy is reported as possibly missable, and even that one is unconfirmed. Everything else — story trophies included — can be earned in free-roam after the credits.</p>
+    <div id="missables-list"></div>
+    <section class="roadmap-note">
+      <h2>Save discipline</h2>
+      <ul>
+        <li>Keep a manual save at the start of every chapter, and one before the final mission.</li>
+        <li>In Chapter 1, after the mission Down to Earth, talk to Lucia in the kitchen in the morning and follow her to the balcony to meditate.</li>
+        <li>Optional missions with black icons and pink letters disappear after a while — PowerPyx reports this does not matter for trophies, because there are far more than the 100 the checklist needs.</li>
+        <li>Quest givers who vanish for a while (Kenton, for example) come back later in the story, so do not panic.</li>
+      </ul>
+    </section>
+  </section>
+</main>
+
+<footer>
+  <p>Names, descriptions and grades are the official list as PlayStation publishes it, via <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">Exophase</a> and <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi">PSNProfiles</a>. Guides are written for this entry in its own words, with each trophy's sources named beside its guide. This guide works fully offline — it loads no file from the network and makes no network request. No Rockstar Games logo or official artwork is used. Built for the make.fun bounty <a href="https://make.fun/bounty/gta6-trophy-guide-01">gta6-trophy-guide-01</a>.</p>
+  <p class="foot-note">Open with <code>?demo</code> in the address to preview the tracker with sample progress (13 of 55 earned). Your own progress is saved only in this browser.</p>
+</footer>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
