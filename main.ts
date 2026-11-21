@@ -9,6 +9,8 @@
 // is: the scorer requires dossier.json to be byte for byte what its own copy
 // writes.
 //
+// Rarity edition (2026-11-21): re-applied under the sealed recording; the hand-in below is unchanged.
+//
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 
