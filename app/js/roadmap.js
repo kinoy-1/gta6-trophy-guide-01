@@ -1,6 +1,8 @@
 // The roadmap to the platinum and the missables page, both built from the
 // official descriptions: which chapters and missions, which collectibles and
-// counts, in what order.
+// counts, in what order. The roadmap is a timeline now: numbered steps on a
+// rail, each with its own progress bar, so the reader sees at a glance how
+// far through each stage they are.
 export const ROADMAP_STAGES = [
   {
     stage: 1,
@@ -28,8 +30,14 @@ export const ROADMAP_STAGES = [
 export function renderRoadmap(container, trophies, earned) {
   container.replaceChildren();
   for (const stage of ROADMAP_STAGES) {
+    const stageTrophies = trophies.filter((t) => t.stage === stage.stage);
+    const got = stageTrophies.filter((t) => earned.has(t.name)).length;
     const section = document.createElement('section');
     section.className = 'stage';
+    const number = document.createElement('span');
+    number.className = 'stage-number';
+    number.textContent = String(stage.stage);
+    section.append(number);
     const heading = document.createElement('h2');
     heading.textContent = stage.title;
     section.append(heading);
@@ -37,12 +45,24 @@ export function renderRoadmap(container, trophies, earned) {
     time.className = 'stage-time';
     time.textContent = stage.time;
     section.append(time);
+    const progress = document.createElement('p');
+    progress.className = 'stage-progress';
+    const strong = document.createElement('b');
+    strong.textContent = `${got}/${stageTrophies.length} trophies earned in this stage`;
+    progress.append(strong);
+    section.append(progress);
+    const bar = document.createElement('div');
+    bar.className = 'stage-bar';
+    const fill = document.createElement('span');
+    fill.style.width = stageTrophies.length ? `${(got / stageTrophies.length) * 100}%` : '0%';
+    bar.append(fill);
+    section.append(bar);
     const text = document.createElement('p');
     text.textContent = stage.text;
     section.append(text);
     const list = document.createElement('ul');
     list.className = 'stage-trophies';
-    for (const trophy of trophies.filter((t) => t.stage === stage.stage)) {
+    for (const trophy of stageTrophies) {
       const item = document.createElement('li');
       if (earned.has(trophy.name)) item.className = 'earned';
       item.textContent = trophy.name;
@@ -53,9 +73,31 @@ export function renderRoadmap(container, trophies, earned) {
   }
 }
 
+const SAVE_SLOTS = [
+  'Start of Chapter 1 — before Down to Earth',
+  'End of Chapter 1 — after the balcony meditation',
+  'Start of Chapter 2 — before Coffee Break',
+  'Start of Chapter 3',
+  'Start of Chapter 4',
+  'Start of Chapter 5 — before the final mission',
+];
+
 export function renderMissables(container, trophies, earned) {
   container.replaceChildren();
   const missable = trophies.filter((t) => t.missable);
+
+  const warning = document.createElement('div');
+  warning.className = 'missable-warning';
+  const warningTitle = document.createElement('p');
+  warningTitle.className = 'missable-warning-title';
+  warningTitle.textContent = '⚠ 1 TROPHY CAN SLIP AWAY — DO THIS IN CHAPTER 1';
+  warning.append(warningTitle);
+  const warningText = document.createElement('p');
+  warningText.textContent =
+    'Only one trophy is reported as possibly missable, and even that one is unconfirmed. Everything else — story trophies included — can be earned in free-roam after the credits. This page is the whole insurance policy.';
+  warning.append(warningText);
+  container.append(warning);
+
   for (const trophy of missable) {
     const card = document.createElement('article');
     card.className = 'missable-card';
@@ -66,6 +108,10 @@ export function renderMissables(container, trophies, earned) {
     official.className = 'official';
     official.textContent = `${trophy.description} — ${trophy.grade} trophy. ${earned.has(trophy.name) ? 'Earned ✓' : 'Not earned yet.'}`;
     card.append(official);
+    const deadline = document.createElement('p');
+    deadline.className = 'missable-deadline';
+    deadline.textContent = '⏰ DEADLINE: before Chapter 1 ends — the balcony meditation is gone for good after that.';
+    card.append(deadline);
     const guide = document.createElement('p');
     guide.textContent = trophy.guide;
     card.append(guide);
@@ -74,6 +120,26 @@ export function renderMissables(container, trophies, earned) {
     card.append(sources);
     container.append(card);
   }
+
+  const saveSection = document.createElement('section');
+  saveSection.className = 'roadmap-note save-note';
+  const saveHeading = document.createElement('h2');
+  saveHeading.textContent = 'Save discipline — 6 slots that cover the whole run';
+  saveSection.append(saveHeading);
+  const saveIntro = document.createElement('p');
+  saveIntro.textContent =
+    'The game has 15 manual save slots and no mission replay, so keep one save at each of these points. If anything goes wrong, reload — never start over.';
+  saveSection.append(saveIntro);
+  const saveList = document.createElement('ul');
+  saveList.className = 'save-list';
+  for (const slot of SAVE_SLOTS) {
+    const item = document.createElement('li');
+    item.textContent = slot;
+    saveList.append(item);
+  }
+  saveSection.append(saveList);
+  container.append(saveSection);
+
   const reassurance = document.createElement('p');
   reassurance.className = 'section-intro';
   reassurance.textContent =

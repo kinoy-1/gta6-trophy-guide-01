@@ -1,8 +1,13 @@
 // Boot: load the official list, wire the tracker, roadmap and missables views,
 // and keep progress in localStorage. No network request is ever made: the only
 // fetch is the trophy list in app/data/trophies.json, a file of this app.
+//
+// Deep links, for screenshots and sharing: #roadmap, #missables, #tracker and
+// #spoiler in the hash, and ?kind=, ?grade= and ?spoiler=1 in the query —
+// e.g. ?demo&kind=story&spoiler=1 opens the tracker filtered to story
+// trophies with spoilers hidden.
 import { loadEarned, saveEarned, loadSettings, saveSettings, exportProgress, importProgressFile } from './store.js';
-import { renderChecklist, renderDetail, renderProgress } from './views.js';
+import { renderChecklist, renderDetail, renderProgress, renderRarityStrip, renderNextUp, renderKindChips } from './views.js';
 import { renderRoadmap, renderMissables } from './roadmap.js';
 
 // A fixed sample set, used only when the page is opened with ?demo: it lets a
@@ -31,12 +36,35 @@ function seedDemoProgress() {
   saveEarned(state.earned);
 }
 
+function applyQueryLinks() {
+  const params = new URLSearchParams(location.search);
+  const kind = params.get('kind');
+  if (kind) state.settings.kind = kind;
+  const grade = params.get('grade');
+  if (grade) state.settings.grade = grade;
+  if (params.get('spoiler') === '1') state.settings.spoiler = true;
+  saveSettings(state.settings);
+}
+
 function selectedTrophy() {
   return state.trophies.find((t) => t.name === state.selected) ?? null;
 }
 
 function renderAll() {
   renderProgress(state.trophies, state.earned);
+  renderRarityStrip(document.getElementById('rarity-strip'), state.trophies, state.earned);
+  renderNextUp(
+    document.getElementById('next-up'),
+    state.trophies,
+    state.earned,
+    onSelectTrophy,
+  );
+  renderKindChips(
+    document.getElementById('kind-chips'),
+    state.trophies,
+    state,
+    onPickKind,
+  );
   const shown = renderChecklist(
     document.getElementById('trophy-list'),
     state.trophies,
@@ -65,6 +93,13 @@ function onSelectTrophy(name) {
   state.selected = name;
   renderAll();
   document.getElementById('detail-pane').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function onPickKind(kind) {
+  state.settings.kind = kind;
+  saveSettings(state.settings);
+  document.getElementById('kind-filter').value = kind;
+  renderAll();
 }
 
 function showView(view) {
@@ -149,13 +184,14 @@ function wireTabs() {
 
 async function bootLeonidaLedger() {
   seedDemoProgress();
+  applyQueryLinks();
   const response = await fetch('data/trophies.json');
   const doc = await response.json();
   state.trophies = doc.trophies;
   state.selected = 'Positive Mental Attitude';
   wireToolbar();
   wireTabs();
-  // Deep links: #roadmap, #missables, #spoiler (combinable, e.g. #tracker&spoiler).
+  // Deep links: #roadmap, #missables, #tracker, #spoiler (combinable).
   for (const token of location.hash.replace(/^#/, '').split('&')) {
     if (token === 'roadmap' || token === 'missables' || token === 'tracker') showView(token);
     if (token === 'spoiler') {

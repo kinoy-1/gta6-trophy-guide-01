@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Leonida Ledger — GTA VI Trophy Guide &amp; Tracker</title>
-<meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: checklist, roadmap to the platinum, missables, and a cited guide for every trophy.">
+<meta name="description" content="Offline guide and tracker for all 55 Grand Theft Auto VI trophies on PlayStation 5: rarity at a glance, checklist, roadmap to the platinum, missables, and a cited guide for every trophy.">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class="brand">
       <p class="kicker">Grand Theft Auto VI &middot; PlayStation 5 &middot; 55 trophies</p>
       <h1>Leonida Ledger</h1>
-      <p class="tagline">The offline guide &amp; tracker for every GTA VI trophy — checklist, roadmap, missables, and a cited guide for each one.</p>
+      <p class="tagline">The offline guide &amp; tracker for every GTA VI trophy — rarity at a glance, checklist, roadmap, missables, and a cited guide for each one.</p>
     </div>
     <section class="progress-card" aria-label="Platinum progress">
       <p class="progress-big"><span id="earned-count">0</span><span class="progress-of"> / 55 earned</span></p>
@@ -22,6 +22,7 @@
       <ul class="grade-counts" id="grade-counts"></ul>
     </section>
   </div>
+  <section class="rarity-strip" id="rarity-strip" aria-label="Rarity at a glance"></section>
   <nav class="tabs" aria-label="Sections">
     <button type="button" class="tab active" data-view="tracker" id="tab-tracker">Tracker</button>
     <button type="button" class="tab" data-view="roadmap" id="tab-roadmap">Roadmap to Platinum</button>
@@ -31,6 +32,7 @@
 
 <main>
   <section id="view-tracker" class="view active" aria-label="Trophy tracker">
+    <p class="next-up" id="next-up" aria-label="Next trophy to chase"></p>
     <div class="toolbar" role="search">
       <label class="search-box">Search <input id="search" type="search" placeholder="Trophy, mission or keyword…" autocomplete="off"></label>
       <label class="select-box">Grade
@@ -62,6 +64,7 @@
       <label class="import-btn">Import progress <input id="import-file" type="file" accept="application/json,.json"></label>
       <button id="reset-btn" type="button" class="quiet">Reset</button>
     </div>
+    <div class="kind-chips" id="kind-chips" aria-label="Filter by kind"></div>
     <p class="list-meta"><span id="shown-count"></span> <span id="filter-note"></span></p>
     <div class="tracker-grid">
       <ol class="trophy-list" id="trophy-list"></ol>
@@ -71,7 +74,7 @@
 
   <section id="view-roadmap" class="view" aria-label="Roadmap to the platinum">
     <p class="section-intro">Built from the official descriptions: the story first, then the 100% checklist, then the cleanup. About 200 hours in all, one playthrough, no online trophies, no difficulty setting — PowerPyx rates the set 4 out of 10.</p>
-    <div id="roadmap-stages"></div>
+    <div id="roadmap-stages" class="roadmap-timeline"></div>
     <section class="roadmap-note">
       <h2>Rules of the road</h2>
       <ul>
@@ -99,7 +102,7 @@
 </main>
 
 <footer>
-  <p>Names, descriptions and grades are the official list as PlayStation publishes it, via <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">Exophase</a> and <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi">PSNProfiles</a>. Guides are written for this entry in its own words, with each trophy's sources named beside its guide. This guide works fully offline — it loads no file from the network and makes no network request. No Rockstar Games logo or official artwork is used. Built for the make.fun bounty <a href="https://make.fun/bounty/gta6-trophy-guide-01">gta6-trophy-guide-01</a>.</p>
+  <p>Names, descriptions and grades are the official list as PlayStation publishes it, via <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">Exophase</a> and <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi">PSNProfiles</a>. Rarity shown here is the official grade make-up — 1 platinum, 2 gold, 6 silver, 46 bronze — no per-trophy rarity percentage is published for this list. Guides are written for this entry in its own words, with each trophy's sources named beside its guide. This guide works fully offline — it loads no file from the network and makes no network request. No Rockstar Games logo or official artwork is used. Built for the make.fun bounty <a href="https://make.fun/bounty/gta6-trophy-guide-01">gta6-trophy-guide-01</a>.</p>
   <p class="foot-note">Open with <code>?demo</code> in the address to preview the tracker with sample progress (13 of 55 earned). Your own progress is saved only in this browser.</p>
 </footer>
 <script type="module" src="js/main.js"></script>
