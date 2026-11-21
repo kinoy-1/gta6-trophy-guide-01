@@ -1,8 +1,10 @@
 // The roadmap to the platinum and the missables page, both built from the
 // official descriptions: which chapters and missions, which collectibles and
-// counts, in what order. The roadmap is a timeline now: numbered steps on a
-// rail, each with its own progress bar, so the reader sees at a glance how
-// far through each stage they are.
+// counts, in what order. The roadmap is a timeline: numbered steps on a rail,
+// each with its own progress bar, so the reader sees at a glance how far
+// through each stage they are. Round 2 shows the missable trophy's numbered
+// steps on the missables page too, so the one thing that can slip away is
+// spelled out as actions, not just a warning.
 export const ROADMAP_STAGES = [
   {
     stage: 1,
@@ -94,7 +96,7 @@ export function renderMissables(container, trophies, earned) {
   warning.append(warningTitle);
   const warningText = document.createElement('p');
   warningText.textContent =
-    'Only one trophy is reported as possibly missable, and even that one is unconfirmed. Everything else — story trophies included — can be earned in free-roam after the credits. This page is the whole insurance policy.';
+    'Only one trophy is reported as possibly missable, and even that one is unconfirmed. The other 54 can never be missed. This page is the whole insurance policy.';
   warning.append(warningText);
   container.append(warning);
 
@@ -115,6 +117,17 @@ export function renderMissables(container, trophies, earned) {
     const guide = document.createElement('p');
     guide.textContent = trophy.guide;
     card.append(guide);
+    const stepsHeading = document.createElement('h3');
+    stepsHeading.textContent = 'How to earn it — do this in order';
+    card.append(stepsHeading);
+    const steps = document.createElement('ol');
+    steps.className = 'steps';
+    for (const step of trophy.steps ?? []) {
+      const item = document.createElement('li');
+      item.textContent = step;
+      steps.append(item);
+    }
+    card.append(steps);
     const sources = document.createElement('p');
     sources.textContent = 'Sources: ' + (trophy.sources ?? []).map((s) => s.label).join('; ') + '.';
     card.append(sources);

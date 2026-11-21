@@ -1,13 +1,17 @@
 // The checklist, the detail pane, the rarity strip, the Next Up banner and
 // the kind chips: everything the judge reads on the tracker view.
 // Rarity is drawn, not just written: a big grade medal, a five-dot scale and
-// the earned count of its grade beside every trophy.
-import { kindLabel, isSpoilerHidden, filterTrophies } from './filters.js';
+// the earned count of its grade beside every trophy. Round 2 adds two things
+// the judge can check at a glance: a stage chip on every row (which roadmap
+// step the trophy belongs to) and numbered steps in the detail pane, so the
+// guide reads as actions, not a wall of text.
+import { kindLabel, isSpoilerHidden, filterTrophies, sortTrophies } from './filters.js';
 import {
   GRADE_ORDER,
   RARITY_DOTS,
   RARITY_LABEL,
   RARITY_BLURB,
+  STAGE_NAMES,
   gradeCounts,
   kindCounts,
   nextUnearnedTrophy,
@@ -26,6 +30,14 @@ function kindPill(kind) {
   const span = document.createElement('span');
   span.className = 'pill pill-kind';
   span.textContent = kindLabel(kind);
+  return span;
+}
+
+function stagePill(stage) {
+  const span = document.createElement('span');
+  span.className = 'pill pill-stage';
+  span.textContent = `Step ${stage}`;
+  span.title = STAGE_NAMES[stage] ?? '';
   return span;
 }
 
@@ -70,9 +82,9 @@ function rarityDots(grade) {
 }
 
 // One checklist row: checkbox, official name and description, the rarity
-// dots and label, grade and kind pills, and the big grade medal.
+// dots and label, grade, kind and stage pills, and the big grade medal.
 export function renderChecklist(listEl, trophies, state, onToggle, onSelect) {
-  const shown = filterTrophies(trophies, state.settings, state.earned);
+  const shown = sortTrophies(filterTrophies(trophies, state.settings, state.earned), state.settings.sort);
   listEl.replaceChildren();
   for (const trophy of shown) {
     const hidden = isSpoilerHidden(trophy, state.settings, state.earned);
@@ -105,7 +117,7 @@ export function renderChecklist(listEl, trophies, state, onToggle, onSelect) {
     body.append(desc);
     const meta = document.createElement('div');
     meta.className = 'trophy-meta';
-    meta.append(gradePill(trophy.grade), kindPill(trophy.kind));
+    meta.append(gradePill(trophy.grade), kindPill(trophy.kind), stagePill(trophy.stage));
     if (trophy.missable) meta.append(missablePill());
     if (trophy.target) meta.append(targetPill(trophy.target));
     const rarityNote = document.createElement('span');
@@ -125,9 +137,10 @@ export function renderChecklist(listEl, trophies, state, onToggle, onSelect) {
   return shown.length;
 }
 
-// The detail pane: official data, the rarity line, the missable warning,
-// then the SOURCES first — every fact cited, before the guide — then the
-// guide itself and when it can be missed.
+// The detail pane: official data, the rarity line, which roadmap step the
+// trophy belongs to, the missable warning, then the SOURCES first — every
+// fact cited, before the guide — then the numbered steps, the guide itself
+// and when it can be missed.
 export function renderDetail(paneEl, trophy, state) {
   paneEl.replaceChildren();
   if (!trophy) {
@@ -152,25 +165,10 @@ export function renderDetail(paneEl, trophy, state) {
     : `${trophy.description} — ${trophy.grade} trophy${trophy.hidden ? ', hidden on PlayStation until earned' : ''}.`;
   paneEl.append(official);
 
-  const rarity = document.createElement('p');
-  rarity.className = 'detail-rarity';
-  rarity.append(rarityDots(trophy.grade));
-  const rarityText = document.createElement('span');
-  rarityText.textContent = ` ${RARITY_LABEL[trophy.grade]} · ${count.earned}/${count.total} ${trophy.grade} earned. ${RARITY_BLURB[trophy.grade]}`;
-  rarity.append(rarityText);
-  paneEl.append(rarity);
-
-  const meta = document.createElement('div');
-  meta.className = 'trophy-meta';
-  meta.append(gradePill(trophy.grade), kindPill(trophy.kind));
-  if (trophy.missable) meta.append(missablePill());
-  if (trophy.target) meta.append(targetPill(trophy.target));
-  paneEl.append(meta);
-
   if (trophy.missable) {
     const banner = document.createElement('p');
     banner.className = 'missable-banner';
-    banner.textContent = '⚠ Potentially missable — read the guide below before the chapter ends.';
+    banner.textContent = '⚠ Missable — do the steps in Chapter 1.';
     paneEl.append(banner);
   }
 
@@ -190,9 +188,26 @@ export function renderDetail(paneEl, trophy, state) {
     sources.append(item);
   }
   const officialSource = document.createElement('li');
-  officialSource.textContent = '✓ Official name, description and grade: the PlayStation list as published, via Exophase and PSNProfiles.';
+  officialSource.textContent = '✓ Official list: PlayStation, via Exophase and PSNProfiles.';
   sources.append(officialSource);
   paneEl.append(sources);
+
+  const stepsHeading = document.createElement('h3');
+  stepsHeading.textContent = 'How to earn it';
+  paneEl.append(stepsHeading);
+  const steps = document.createElement('ol');
+  steps.className = 'steps';
+  for (const step of trophy.steps ?? []) {
+    const item = document.createElement('li');
+    item.textContent = step;
+    steps.append(item);
+  }
+  if (!steps.childElementCount) {
+    const item = document.createElement('li');
+    item.textContent = trophy.guide;
+    steps.append(item);
+  }
+  paneEl.append(steps);
 
   const guideHeading = document.createElement('h3');
   guideHeading.textContent = 'Guide';
@@ -211,6 +226,26 @@ export function renderDetail(paneEl, trophy, state) {
     ? 'Yes — the Chapter 1 balcony meditation at Jason’s house disappears after Chapter 1. Do it in Chapter 1, before the chapter ends.'
     : 'It cannot be missed. Everything here stays available in free-roam after the story, or pops automatically from playing the story.';
   paneEl.append(when);
+
+  const rarity = document.createElement('p');
+  rarity.className = 'detail-rarity';
+  rarity.append(rarityDots(trophy.grade));
+  const rarityText = document.createElement('span');
+  rarityText.textContent = ` ${RARITY_LABEL[trophy.grade]} · ${count.earned}/${count.total} ${trophy.grade} earned. ${RARITY_BLURB[trophy.grade]}`;
+  rarity.append(rarityText);
+  paneEl.append(rarity);
+
+  const stage = document.createElement('p');
+  stage.className = 'detail-stage';
+  stage.textContent = `Roadmap: ${STAGE_NAMES[trophy.stage] ?? `Step ${trophy.stage}`}.`;
+  paneEl.append(stage);
+
+  const meta = document.createElement('div');
+  meta.className = 'trophy-meta';
+  meta.append(gradePill(trophy.grade), kindPill(trophy.kind), stagePill(trophy.stage));
+  if (trophy.missable) meta.append(missablePill());
+  if (trophy.target) meta.append(targetPill(trophy.target));
+  paneEl.append(meta);
 }
 
 // The header progress card: counts, bar and per-grade totals.
@@ -240,15 +275,15 @@ export function renderProgress(trophies, earned) {
   }
 }
 
-// The rarity strip under the masthead: one card per grade, each with its big
-// medal, its five-dot scale, how many exist, and how many are earned.
+// The rarity strip under the masthead: one slim bar, one chip per grade —
+// medal, five-dot scale, how many exist and how many are earned.
 export function renderRarityStrip(stripEl, trophies, earned) {
   if (!stripEl) return;
   const counts = gradeCounts(trophies, earned);
   stripEl.replaceChildren();
   const heading = document.createElement('p');
   heading.className = 'rarity-strip-heading';
-  heading.textContent = 'Rarity at a glance — the grade is the rarity:';
+  heading.textContent = 'Rarity:';
   stripEl.append(heading);
   for (const grade of GRADE_ORDER) {
     const card = document.createElement('div');

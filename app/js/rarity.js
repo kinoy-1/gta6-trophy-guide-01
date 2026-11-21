@@ -24,6 +24,13 @@ export const RARITY_BLURB = {
   bronze: 'Forty-six bronzes — the bulk of the list, one per feat.',
 };
 
+// The roadmap's three stages, as the detail pane names them beside a trophy.
+export const STAGE_NAMES = {
+  1: 'Step 1 — Play the story',
+  2: 'Step 2 — The 100% checklist',
+  3: 'Step 3 — Side quests, then cleanup',
+};
+
 // Earned and total counts per grade, for the rarity strip and the detail pane.
 export function gradeCounts(trophies, earned) {
   const counts = {};

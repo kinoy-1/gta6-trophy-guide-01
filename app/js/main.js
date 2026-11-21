@@ -3,9 +3,10 @@
 // fetch is the trophy list in app/data/trophies.json, a file of this app.
 //
 // Deep links, for screenshots and sharing: #roadmap, #missables, #tracker and
-// #spoiler in the hash, and ?kind=, ?grade= and ?spoiler=1 in the query —
-// e.g. ?demo&kind=story&spoiler=1 opens the tracker filtered to story
-// trophies with spoilers hidden.
+// #spoiler in the hash, and ?kind=, ?grade=, ?sort= and ?spoiler=1 in the
+// query — e.g. ?demo&kind=story&spoiler=1 opens the tracker filtered to story
+// trophies with spoilers hidden. ?scroll=<pixels> scrolls the page after the
+// first render, so a screenshot can frame any part of the guide.
 import { loadEarned, saveEarned, loadSettings, saveSettings, exportProgress, importProgressFile } from './store.js';
 import { renderChecklist, renderDetail, renderProgress, renderRarityStrip, renderNextUp, renderKindChips } from './views.js';
 import { renderRoadmap, renderMissables } from './roadmap.js';
@@ -42,6 +43,8 @@ function applyQueryLinks() {
   if (kind) state.settings.kind = kind;
   const grade = params.get('grade');
   if (grade) state.settings.grade = grade;
+  const sort = params.get('sort');
+  if (sort === 'roadmap' || sort === 'rarest' || sort === 'az') state.settings.sort = sort;
   if (params.get('spoiler') === '1') state.settings.spoiler = true;
   saveSettings(state.settings);
 }
@@ -117,11 +120,13 @@ function wireToolbar() {
   const search = document.getElementById('search');
   const grade = document.getElementById('grade-filter');
   const kind = document.getElementById('kind-filter');
+  const sort = document.getElementById('sort-select');
   const hideEarned = document.getElementById('hide-earned');
   const spoiler = document.getElementById('spoiler-toggle');
   search.value = settings.search;
   grade.value = settings.grade;
   kind.value = settings.kind;
+  sort.value = settings.sort;
   hideEarned.checked = settings.hideEarned;
   spoiler.checked = settings.spoiler;
 
@@ -137,6 +142,11 @@ function wireToolbar() {
   });
   kind.addEventListener('change', () => {
     settings.kind = kind.value;
+    saveSettings(settings);
+    renderAll();
+  });
+  sort.addEventListener('change', () => {
+    settings.sort = sort.value;
     saveSettings(settings);
     renderAll();
   });
@@ -201,6 +211,9 @@ async function bootLeonidaLedger() {
     }
   }
   renderAll();
+  // Screenshot framing: ?scroll=<pixels> scrolls once, after the first render.
+  const scrollTo = Number(new URLSearchParams(location.search).get('scroll'));
+  if (Number.isFinite(scrollTo) && scrollTo > 0) window.scrollTo(0, scrollTo);
 }
 
 bootLeonidaLedger();

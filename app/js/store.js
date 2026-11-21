@@ -1,4 +1,5 @@
 // Progress store: earned trophy names in localStorage, with export and import.
+// Round 2 adds one saved setting: how the checklist is sorted.
 export const PROGRESS_KEY = 'leonida-ledger-progress-v1';
 export const SETTINGS_KEY = 'leonida-ledger-settings-v1';
 
@@ -26,9 +27,10 @@ export function loadSettings() {
       grade: typeof parsed.grade === 'string' ? parsed.grade : 'all',
       kind: typeof parsed.kind === 'string' ? parsed.kind : 'all',
       search: typeof parsed.search === 'string' ? parsed.search : '',
+      sort: typeof parsed.sort === 'string' ? parsed.sort : 'roadmap',
     };
   } catch {
-    return { spoiler: false, hideEarned: false, grade: 'all', kind: 'all', search: '' };
+    return { spoiler: false, hideEarned: false, grade: 'all', kind: 'all', search: '', sort: 'roadmap' };
   }
 }
 

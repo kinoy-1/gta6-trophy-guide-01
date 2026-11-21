@@ -1,4 +1,5 @@
-// Filtering and the spoiler rule: which trophies a view shows, and what is hidden.
+// Filtering, sorting and the spoiler rule: which trophies a view shows, in
+// what order, and what is hidden.
 export const KIND_LABELS = {
   story: 'Story',
   missable: 'Missable',
@@ -27,7 +28,7 @@ export function isSpoilerHidden(trophy, settings, earned) {
 
 export function matchesSearch(trophy, query) {
   if (!query) return true;
-  const haystack = `${trophy.name} ${trophy.description} ${trophy.guide} ${trophy.kind}`.toLowerCase();
+  const haystack = `${trophy.name} ${trophy.description} ${trophy.guide} ${trophy.kind} ${(trophy.steps ?? []).join(' ')}`.toLowerCase();
   return query.toLowerCase().split(/\s+/).every((word) => haystack.includes(word));
 }
 
@@ -44,4 +45,23 @@ export function filterTrophies(trophies, settings, earned) {
     if (settings.hideEarned && earned.has(trophy.name)) return false;
     return matchesSearch(trophy, settings.search.trim());
   });
+}
+
+// How rare a grade is, for sorting: platinum first, then gold, silver, bronze.
+const GRADE_RANK = { platinum: 0, gold: 1, silver: 2, bronze: 3 };
+
+// Three orders for the checklist: the roadmap order (stage, then official
+// list order), rarest grade first, or name A–Z. Finding a trophy should take
+// a glance, whatever order the reader thinks in.
+export function sortTrophies(trophies, sort) {
+  const list = [...trophies];
+  if (sort === 'rarest') {
+    return list.sort(
+      (a, b) => (GRADE_RANK[a.grade] - GRADE_RANK[b.grade]) || (a.stage - b.stage) || (a.id - b.id),
+    );
+  }
+  if (sort === 'az') {
+    return list.sort((a, b) => a.name.localeCompare(b.name));
+  }
+  return list.sort((a, b) => (a.stage - b.stage) || (a.id - b.id));
 }
